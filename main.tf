@@ -8,6 +8,10 @@ module "aws_vpc" {
 # EKS Cluster Configuration
 module "eks_cluster" {
   source              = "github.com/ard-hmd/terraform-aws-eks-cluster.git"
+  cluster_config      = {
+    name    = "eks-cluster-spring-petclinic"
+    version = "1.27"
+  }
   public_subnets_ids  = module.aws_vpc.public_subnets_ids
   private_subnets_ids = module.aws_vpc.private_subnets_ids
 }
