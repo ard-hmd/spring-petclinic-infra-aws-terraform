@@ -43,160 +43,70 @@ module "eks_cluster_nodegroup" {
 }
 
 
-module "rds_module" {
+module "rds_instance" {
   source     = "github.com/ard-hmd/terraform-aws-rds-with-replica.git"
   aws_region = var.aws_region
-
-  resource_name_prefix = "my-rds-"
   
   database_configurations = [
     {
-      identifier              = "mydb1"
-      allocated_storage       = 10
-      engine_version          = "8.0"
-      instance_class          = "db.t3.micro"
-      db_name                 = "mydatabase1"
-      db_username             = "admin"
-      db_password             = "mypassword"
-      parameter_group_name    = "default.mysql8.0"
-      db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
-      skip_final_snapshot     = true
-      publicly_accessible     = false
-      backup_retention_period = 1
-      vpc_id                  = module.aws_vpc.vpc_id
-      allowed_cidrs           = [module.aws_vpc.vpc_cidr]
-      sg_name                 = "my-sg"
-      sg_description          = "Security group for mydb1"
-      multi_az                = true
-    },
+     identifier              = "customersdb"
+     allocated_storage       = 10
+     engine_version          = "8.0"
+     instance_class          = "db.t3.micro"
+     db_name                 = "customersdb"
+     db_username             = "admin"
+     db_password             = var.customersdb_password
+     parameter_group_name    = "default.mysql8.0"
+     db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
+     skip_final_snapshot     = true
+     publicly_accessible     = false
+     backup_retention_period = 0
+     vpc_id                  = module.aws_vpc.vpc_id
+     allowed_cidrs           = [module.aws_vpc.vpc_cidr]
+     multi_az                = true
+     sg_name                 = "customers-db-sg"
+     sg_description          = "Security Group for customersdb"
+   },
+   # Vets Database Configuration
+   {
+     identifier              = "vetsdb"
+     allocated_storage       = 10
+     engine_version          = "8.0"
+     instance_class          = "db.t3.micro"
+     db_name                 = "vetsdb"
+     db_username             = "admin"
+     db_password             = var.vetsdb_password
+     parameter_group_name    = "default.mysql8.0"
+     db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
+     skip_final_snapshot     = true
+     publicly_accessible     = false
+     backup_retention_period = 0
+     vpc_id                  = module.aws_vpc.vpc_id
+     allowed_cidrs           = [module.aws_vpc.vpc_cidr]
+     multi_az                = true
+     sg_name                 = "vets-db-sg"
+     sg_description          = "Security Group for vetsdb"
+   },
+   # Visits Database Configuration
+   {
+     identifier              = "visitsdb"
+     allocated_storage       = 10
+     engine_version          = "8.0"
+     instance_class          = "db.t3.micro"
+     db_name                 = "visitsdb"
+     db_username             = "admin"
+     db_password             = var.visitsdb_password
+     parameter_group_name    = "default.mysql8.0"
+     db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
+     skip_final_snapshot     = true
+     publicly_accessible     = false
+     backup_retention_period = 0
+     vpc_id                  = module.aws_vpc.vpc_id
+     allowed_cidrs           = [module.aws_vpc.vpc_cidr]
+     multi_az                = true
+     sg_name                 = "visits-db-sg"
+     sg_description          = "Security Group for visitsdb"
+   },
   ]
-
-  replica_configurations = [
-    {
-      identifier              = "mydb1-replica"
-      instance_class          = "db.t3.micro"
-      backup_retention_period = 0
-      multi_az                = false
-      apply_immediately       = true
-    },
-  ]
-
-  create_replica = true
+  create_replica = false
 }
-
-
-
-
-
-
-
-# RDS Instances Configuration
-# module "rds_instances" {
-#  source     = "github.com/ard-hmd/terraform-aws-rds.git"
-#  aws_region = var.aws_region
-
-#  # Database Configurations
-#  database_configurations = [
-#     # Customers Database Configuration
-#    {
-#      identifier              = "customersdb"
-#      allocated_storage       = 10
-#      engine_version          = "5.7"
-#      instance_class          = "db.t3.micro"
-#      db_name                 = "customersdb"
-#      db_username             = "admin"
-#      db_password             = var.customersdb_password
-#      parameter_group_name    = "default.mysql5.7"
-#      db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
-#      skip_final_snapshot     = true
-#      publicly_accessible     = false
-#      backup_retention_period = 1
-#      vpc_id                  = module.aws_vpc.vpc_id
-#      allowed_cidrs           = [module.aws_vpc.vpc_cidr]
-#      multi_az                = true
-#      sg_name                 = "customers-db-sg"
-#      sg_description          = "Security Group for customersdb"
-#    },
-#    # Vets Database Configuration
-#    {
-#      identifier              = "vetsdb"
-#      allocated_storage       = 10
-#      engine_version          = "5.7"
-#      instance_class          = "db.t3.micro"
-#      db_name                 = "vetsdb"
-#      db_username             = "admin"
-#      db_password             = var.vetsdb_password
-#      parameter_group_name    = "default.mysql5.7"
-#      db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
-#      skip_final_snapshot     = true
-#      publicly_accessible     = false
-#      backup_retention_period = 1
-#      vpc_id                  = module.aws_vpc.vpc_id
-#      allowed_cidrs           = [module.aws_vpc.vpc_cidr]
-#      multi_az                = true
-#      sg_name                 = "vets-db-sg"
-#      sg_description          = "Security Group for vetsdb"
-#    },
-#    # Visits Database Configuration
-#    {
-#      identifier              = "visitsdb"
-#      allocated_storage       = 10
-#      engine_version          = "5.7"
-#      instance_class          = "db.t3.micro"
-#      db_name                 = "visitsdb"
-#      db_username             = "admin"
-#      db_password             = var.visitsdb_password
-#      parameter_group_name    = "default.mysql5.7"
-#      db_subnet_group_name    = module.aws_vpc.rds_subnet_group_name
-#      skip_final_snapshot     = true
-#      publicly_accessible     = false
-#      backup_retention_period = 1
-#      vpc_id                  = module.aws_vpc.vpc_id
-#      allowed_cidrs           = [module.aws_vpc.vpc_cidr]
-#      multi_az                = true
-#      sg_name                 = "visits-db-sg"
-#      sg_description          = "Security Group for visitsdb"
-#    },
-#  ]
-# }
-
-# # RDS Replicas Configuration
-# module "rds_replicas" {
-#   source = "github.com/ard-hmd/terraform-aws-rds-replica.git"
-
-#   # Replica Configurations
-#   replica_configurations = [
-#     # Customers Database Replica Configuration
-#     {
-#       instance_class          = "db.t3.micro"
-#       skip_final_snapshot     = true
-#       backup_retention_period = 0
-#       replicate_source_db     = "customersdb"
-#       multi_az                = true
-#       apply_immediately       = true
-#       identifier              = "customersdb-replica"
-#     },
-#     # Vets Database Replica Configuration
-#     {
-#       instance_class          = "db.t3.micro"
-#       skip_final_snapshot     = true
-#       backup_retention_period = 0
-#       replicate_source_db     = "vetsdb"
-#       multi_az                = true
-#       apply_immediately       = true
-#       identifier              = "vetsdb-replica"
-#     },
-#     # Visits Database Replica Configuration
-#     {
-#       instance_class          = "db.t3.micro"
-#       skip_final_snapshot     = true
-#       backup_retention_period = 0
-#       replicate_source_db     = "visitsdb"
-#       multi_az                = true
-#       apply_immediately       = true
-#       identifier              = "visitsdb-replica"
-#     },
-#   ]
-
-#   depends_on = [module.rds_instances]
-# }
