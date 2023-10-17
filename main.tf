@@ -32,8 +32,8 @@ module "eks_cluster_nodegroup" {
       capacity_type  = "ON_DEMAND"
       disk_size      = 20
       scaling_config = {
-        desired_size = 2
-        max_size     = 2
+        desired_size = 3
+        max_size     = 3
         min_size     = 1
       }
     }
